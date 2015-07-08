@@ -70,10 +70,13 @@
 #pragma mark - property
 - (void)setIndex:(NSInteger)newValue
 {
-    if (newValue>=0 && newValue<self.items.count) {
-        NSIndexPath *index = [NSIndexPath indexPathForRow:newValue inSection:0];
-        [_listView scrollToRowAtIndexPath:index atScrollPosition:UITableViewScrollPositionTop animated:NO];
-    }
+    NSInteger num = newValue;
+    if (num<0) {
+        num = 0;
+    }else if(num >= _items.count)
+        num = _items.count-1;
+    NSIndexPath *index = [NSIndexPath indexPathForRow:num inSection:0];
+    [_listView scrollToRowAtIndexPath:index atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
 
 - (void)reload
