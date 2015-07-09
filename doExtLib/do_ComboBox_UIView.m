@@ -38,6 +38,10 @@
     _items = [NSArray array];
     
     self.userInteractionEnabled = YES;
+    
+    _fontColor = [doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]];
+    
+    _fontSize = [[_model GetProperty:@"fontSize"].DefaultValue integerValue];
 }
 //销毁所有的全局对象
 - (void) OnDispose
@@ -71,7 +75,7 @@
 - (void)change_fontColor:(NSString *)newValue
 {
     //自己的代码实现
-    _fontColor = [doUIModuleHelper GetColorFromString:newValue :[doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontStyle"].DefaultValue :[UIColor blackColor]]];
+    _fontColor = [doUIModuleHelper GetColorFromString:newValue :[doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]]];
     self.tintColor = _fontColor;
     if (poplistview.isDisplay) {
         [poplistview reload];
@@ -191,7 +195,8 @@
 - (void)popListView:(doPopListView *)popListView didSelectIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell  = [popListView.listView cellForRowAtIndexPath:indexPath];
-    [self setTitle:cell.textLabel.text forState:UIControlStateNormal];
+    UILabel *label = (UILabel *)[cell.contentView viewWithTag:999];
+    [self setTitle:label.text forState:UIControlStateNormal];
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
     [_invokeResult SetResultInteger:(int)indexPath.row];
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
