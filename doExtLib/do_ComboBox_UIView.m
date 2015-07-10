@@ -45,7 +45,7 @@
     
     _fontSize = [[_model GetProperty:@"fontSize"].DefaultValue integerValue];
     
-    _currentIndex = [[_model GetProperty:@"index"].DefaultValue integerValue];;
+    _currentIndex = [[_model GetProperty:@"index"].DefaultValue integerValue];
 }
 //销毁所有的全局对象
 - (void) OnDispose
@@ -105,14 +105,22 @@
 - (void)change_index:(NSString *)newValue
 {
     //自己的代码实现
-    poplistview.index = [newValue integerValue];
-    _currentIndex = [newValue integerValue];
+    NSInteger num = [newValue integerValue];
+    if (_items.count>0) {
+        if (num<0) {
+            num = 0;
+        }else if(num >= _items.count)
+            num = _items.count-1;
+        poplistview.index = num;
+    }
+    _currentIndex = num;
 }
 - (void)change_items:(NSString *)newValue
 {
     //自己的代码实现
     _items = [newValue componentsSeparatedByString:@","];
     poplistview.items = _items;
+    [self change_index:[@(_currentIndex) stringValue]];
     if (_items.count > 0) {
         [self setTitle:[_items objectAtIndex:_currentIndex] forState:UIControlStateNormal];
     }
