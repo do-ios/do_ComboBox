@@ -80,7 +80,7 @@
 {
     //自己的代码实现
     _fontColor = [doUIModuleHelper GetColorFromString:newValue :[doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]]];
-    self.tintColor = _fontColor;
+    [self setTitleColor:_fontColor forState:UIControlStateNormal];
     if (poplistview.isDisplay) {
         [poplistview reload];
     }
@@ -120,10 +120,15 @@
     //自己的代码实现
     _items = [newValue componentsSeparatedByString:@","];
     poplistview.items = _items;
+
     [self change_index:[@(_currentIndex) stringValue]];
     if (_items.count > 0) {
         [self setTitle:[_items objectAtIndex:_currentIndex] forState:UIControlStateNormal];
     }
+
+    CGFloat fontSize = self.titleLabel.font.pointSize;
+    [self setFontStyle:self.titleLabel :fontSize];
+
     [self resetPoplist];
 }
 
