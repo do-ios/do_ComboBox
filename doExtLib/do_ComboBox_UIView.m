@@ -29,6 +29,8 @@
     NSInteger _fontSize;
     UIColor *_fontColor;
     NSString *_fontStyle;
+    
+    NSInteger _currentIndex;
 }
 #pragma mark - doIUIModuleView协议方法（必须）
 //引用Model对象
@@ -42,6 +44,8 @@
     _fontColor = [doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]];
     
     _fontSize = [[_model GetProperty:@"fontSize"].DefaultValue integerValue];
+    
+    _currentIndex = [[_model GetProperty:@"index"].DefaultValue integerValue];;
 }
 //销毁所有的全局对象
 - (void) OnDispose
@@ -102,12 +106,16 @@
 {
     //自己的代码实现
     poplistview.index = [newValue integerValue];
+    _currentIndex = [newValue integerValue];
 }
 - (void)change_items:(NSString *)newValue
 {
     //自己的代码实现
     _items = [newValue componentsSeparatedByString:@","];
     poplistview.items = _items;
+    if (_items.count > 0) {
+        [self setTitle:[_items objectAtIndex:_currentIndex] forState:UIControlStateNormal];
+    }
     [self resetPoplist];
 }
 
