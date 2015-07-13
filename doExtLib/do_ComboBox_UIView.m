@@ -18,7 +18,7 @@
 #define CELL_HEIGHT 60.0f
 
 @interface do_ComboBox_UIView ()<PopListViewDataSource, PopListViewDelegate>
-
+@property (nonatomic , assign) NSInteger currentIndex;
 @end
 
 @implementation do_ComboBox_UIView
@@ -29,9 +29,8 @@
     NSInteger _fontSize;
     UIColor *_fontColor;
     NSString *_fontStyle;
-    
-    NSInteger _currentIndex;
 }
+@synthesize currentIndex=_currentIndex;
 #pragma mark - doIUIModuleView协议方法（必须）
 //引用Model对象
 - (void) LoadView: (doUIModule *) _doUIModule
@@ -45,7 +44,7 @@
     
     _fontSize = [[_model GetProperty:@"fontSize"].DefaultValue integerValue];
     
-    _currentIndex = [[_model GetProperty:@"index"].DefaultValue integerValue];
+    self.currentIndex = [[_model GetProperty:@"index"].DefaultValue integerValue];
 }
 //销毁所有的全局对象
 - (void) OnDispose
@@ -106,15 +105,22 @@
 {
     //自己的代码实现
     NSInteger num = [newValue integerValue];
+    _currentIndex = num;
+    poplistview.index = self.currentIndex;
+    [self resetContent];
+}
+- (NSInteger)currentIndex
+{
+    NSInteger num = _currentIndex;
     if (_items.count>0) {
         if (num<0) {
             num = 0;
         }else if(num >= _items.count)
             num = _items.count-1;
-        poplistview.index = num;
     }
-    _currentIndex = num;
+    return num;
 }
+
 - (void)change_items:(NSString *)newValue
 {
     //自己的代码实现
@@ -122,16 +128,20 @@
     poplistview.items = _items;
 
     [self change_index:[@(_currentIndex) stringValue]];
-    if (_items.count > 0) {
-        [self setTitle:[_items objectAtIndex:_currentIndex] forState:UIControlStateNormal];
-    }
+    [self resetContent];
 
     CGFloat fontSize = self.titleLabel.font.pointSize;
     [self setFontStyle:self.titleLabel :fontSize];
 
     [self resetPoplist];
+    poplistview.index = self.currentIndex;
 }
-
+- (void)resetContent
+{
+    if (_items.count > 0) {
+        [self setTitle:[_items objectAtIndex:self.currentIndex] forState:UIControlStateNormal];
+    }
+}
 - (void)setFontStyle:(UILabel *)label :(CGFloat)fontSize
 {
     //fontStyle
