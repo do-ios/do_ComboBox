@@ -21,7 +21,8 @@
     //属性声明
 	[self RegistProperty:[[doProperty alloc]init:@"fontColor" :String :@"000000FF" :NO]];
 	[self RegistProperty:[[doProperty alloc]init:@"fontSize" :String :@"17" :NO]];
-	[self RegistProperty:[[doProperty alloc]init:@"fontStyle" :String :@"normal" :NO]];
+    [self RegistProperty:[[doProperty alloc]init:@"fontStyle" :String :@"normal" :NO]];
+    [self RegistProperty:[[doProperty alloc]init:@"textFlag" :String :@"normal" :NO]];
 	[self RegistProperty:[[doProperty alloc]init:@"index" :String :@"" :NO]];
 	[self RegistProperty:[[doProperty alloc]init:@"items" :String :@"" :NO]];
 

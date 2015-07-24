@@ -14,7 +14,9 @@
 #import "doIScriptEngine.h"
 #import "doPopListView.h"
 #import "doTextHelper.h"
+#import "doDefines.h"
 
+#define FONT_OBLIQUITY 15.0
 #define CELL_HEIGHT 60.0f
 
 @interface do_ComboBox_UIView ()<PopListViewDataSource, PopListViewDelegate>
@@ -23,12 +25,13 @@
 
 @implementation do_ComboBox_UIView
 {
-    NSArray *_items;
+    NSMutableArray *_items;
     doPopListView *poplistview;
     
     NSInteger _fontSize;
     UIColor *_fontColor;
     NSString *_fontStyle;
+    NSString *_myFontFlag;
 }
 @synthesize currentIndex=_currentIndex;
 #pragma mark - doIUIModuleView协议方法（必须）
@@ -36,20 +39,24 @@
 - (void) LoadView: (doUIModule *) _doUIModule
 {
     _model = (typeof(_model)) _doUIModule;
-    _items = [NSArray array];
+    _items = [NSMutableArray array];
     
     self.userInteractionEnabled = YES;
-    
-    _fontColor = [doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]];
-    
-    _fontSize = [[_model GetProperty:@"fontSize"].DefaultValue integerValue];
-    
-    self.currentIndex = [[_model GetProperty:@"index"].DefaultValue integerValue];
+
+    [self change_fontColor:[_model GetProperty:@"fontColor"].DefaultValue];
+    [self change_index:[_model GetProperty:@"index"].DefaultValue];
+    [self change_fontStyle:[_model GetProperty:@"fontStyle"].DefaultValue];
+    [self change_textFlag:[_model GetProperty:@"textFlag"].DefaultValue];
+    [self change_fontSize:[_model GetProperty:@"fontSize"].DefaultValue];
 }
 //销毁所有的全局对象
 - (void) OnDispose
 {
     //自定义的全局属性,view-model(UIModel)类销毁时会递归调用<子view-model(UIModel)>的该方法，将上层的引用切断。所以如果self类有非原生扩展，需主动调用view-model(UIModel)的该方法。(App || Page)-->强引用-->view-model(UIModel)-->强引用-->view
+    poplistview = nil;
+    [_items removeAllObjects];
+    _items = nil;
+    _model = nil;
 }
 //实现布局
 - (void) OnRedraw
@@ -89,6 +96,10 @@
     //自己的代码实现
     _fontSize = [doUIModuleHelper GetDeviceFontSize:[[doTextHelper Instance] StrToInt:newValue :[[_model GetProperty:@"fontSize"].DefaultValue intValue]] :_model.XZoom :_model.YZoom];
     self.titleLabel.font = [UIFont systemFontOfSize:_fontSize];
+    if(_fontStyle)
+        [self change_fontStyle:_fontStyle];
+    if (_myFontFlag)
+        [self change_textFlag:_myFontFlag];
     if (poplistview.isDisplay) {
         [poplistview reload];
     }
@@ -101,6 +112,38 @@
     [self setFontStyle:self.titleLabel :fontSize];
     [poplistview reload];
 }
+
+- (void)change_textFlag:(NSString *)newValue
+{
+    //自己的代码实现
+    _myFontFlag = [NSString stringWithFormat:@"%@",newValue];
+
+    CGFloat fontSize = self.titleLabel.font.pointSize;
+    [self setTextFlag:self.titleLabel :fontSize];
+    [poplistview reload];
+}
+- (void)setTextFlag:(UILabel *)label :(CGFloat)fontSize
+{
+    if (!IOS_8 && _fontSize < 14) {
+        return;
+    }
+    if (label.text==nil || [label.text isEqualToString:@""]) return;
+
+    NSMutableAttributedString *content = [label.attributedText mutableCopy];
+    [content beginEditing];
+    NSRange contentRange = {0,[content length]};
+    if ([_myFontFlag isEqualToString:@"normal" ]) {
+        [content removeAttribute:NSUnderlineStyleAttributeName range:contentRange];
+        [content removeAttribute:NSStrikethroughStyleAttributeName range:contentRange];
+    }else if ([_myFontFlag isEqualToString:@"underline" ]) {
+        [content addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
+    }else if ([_myFontFlag isEqualToString:@"strikethrough" ]) {
+        [content addAttribute:NSStrikethroughStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
+    }
+    label.attributedText = content;
+    [content endEditing];
+}
+
 - (void)change_index:(NSString *)newValue
 {
     //自己的代码实现
@@ -124,7 +167,7 @@
 - (void)change_items:(NSString *)newValue
 {
     //自己的代码实现
-    _items = [newValue componentsSeparatedByString:@","];
+    _items = [NSMutableArray arrayWithArray:[newValue componentsSeparatedByString:@","]];
     poplistview.items = _items;
 
     [self change_index:[@(_currentIndex) stringValue]];
@@ -132,6 +175,7 @@
 
     CGFloat fontSize = self.titleLabel.font.pointSize;
     [self setFontStyle:self.titleLabel :fontSize];
+    [self setTextFlag:self.titleLabel :fontSize];
 
     [self resetPoplist];
     poplistview.index = self.currentIndex;
@@ -144,27 +188,20 @@
 }
 - (void)setFontStyle:(UILabel *)label :(CGFloat)fontSize
 {
-    //fontStyle
+    //自己的代码实现
     if (label.text==nil || [label.text isEqualToString:@""]) return;
-    NSRange range = {0,[label.text length]};
-    NSMutableAttributedString *str = [label.attributedText mutableCopy];
-    [str removeAttribute:NSUnderlineStyleAttributeName range:range];
-    label.attributedText = str;
-    
+
     if([_fontStyle isEqualToString:@"normal"])
         [label setFont:[UIFont systemFontOfSize:fontSize]];
     else if([_fontStyle isEqualToString:@"bold"])
         [label setFont:[UIFont boldSystemFontOfSize:fontSize]];
     else if([_fontStyle isEqualToString:@"italic"])
-        [label setFont:[UIFont italicSystemFontOfSize:fontSize]];
-    else if([_fontStyle isEqualToString:@"underline"])
     {
-        NSMutableAttributedString *content = [label.attributedText mutableCopy];
-        NSRange contentRange = {0,[content length]};
-        [content addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
-        label.attributedText = content;
-        [content endEditing];
+        CGAffineTransform matrix =  CGAffineTransformMake(1, 0, tanf(FONT_OBLIQUITY * (CGFloat)M_PI / 180), 1, 0, 0);
+        UIFontDescriptor *desc = [ UIFontDescriptor fontDescriptorWithName :[ UIFont systemFontOfSize :fontSize ]. fontName matrix :matrix];
+        [label setFont:[ UIFont fontWithDescriptor :desc size :fontSize]];
     }
+    else if([_fontStyle isEqualToString:@"bold_italic"]){}
 }
 
 - (void)resetPoplist
@@ -213,6 +250,7 @@
     
     CGFloat fontSize = label.font.pointSize;
     [self setFontStyle:label :fontSize];
+    [self setTextFlag:label :fontSize];
 
     return cell;
 }
