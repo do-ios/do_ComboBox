@@ -82,6 +82,26 @@
  获取属性最初的默认值
  NSString *属性名 = [(doUIModule *)_model GetProperty:@"属性名"].DefaultValue;
  */
+
+- (void)drawRect:(CGRect)rect
+{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextSetLineWidth(context, 13.0);
+
+    CGPoint sPoints[3];
+    CGFloat h = CGRectGetHeight(rect);
+    CGFloat w = CGRectGetWidth(rect);
+    sPoints[0] =CGPointMake(w-30, h);
+    sPoints[1] =CGPointMake(w, h-30);
+    sPoints[2] =CGPointMake(w, h);
+
+    CGContextAddLines(context, sPoints, 3);
+
+    CGContextClosePath(context);
+    CGContextDrawPath(context, kCGPathFillStroke);
+}
 - (void)change_fontColor:(NSString *)newValue
 {
     //自己的代码实现
