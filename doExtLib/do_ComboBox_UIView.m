@@ -87,7 +87,7 @@
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    CGContextSetFillColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
     CGContextSetLineWidth(context, .1);
 
     CGPoint sPoints[3];
