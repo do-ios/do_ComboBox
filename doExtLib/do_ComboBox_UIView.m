@@ -87,20 +87,20 @@
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
-    CGContextSetLineWidth(context, 13.0);
+    CGContextSetFillColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextSetLineWidth(context, .1);
 
     CGPoint sPoints[3];
     CGFloat h = CGRectGetHeight(rect);
     CGFloat w = CGRectGetWidth(rect);
-    sPoints[0] =CGPointMake(w-30, h);
-    sPoints[1] =CGPointMake(w, h-30);
+    sPoints[0] =CGPointMake(w-15, h);
+    sPoints[1] =CGPointMake(w, h-15);
     sPoints[2] =CGPointMake(w, h);
 
     CGContextAddLines(context, sPoints, 3);
 
     CGContextClosePath(context);
-    CGContextDrawPath(context, kCGPathFillStroke);
+    CGContextDrawPath(context, kCGPathFill);
 }
 - (void)change_fontColor:(NSString *)newValue
 {
