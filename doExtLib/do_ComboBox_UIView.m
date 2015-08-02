@@ -93,8 +93,8 @@
     CGPoint sPoints[3];
     CGFloat h = CGRectGetHeight(rect);
     CGFloat w = CGRectGetWidth(rect);
-    sPoints[0] =CGPointMake(w-15, h);
-    sPoints[1] =CGPointMake(w, h-15);
+    sPoints[0] =CGPointMake(w-h*0.1, h);
+    sPoints[1] =CGPointMake(w, h-h*0.1);
     sPoints[2] =CGPointMake(w, h);
 
     CGContextAddLines(context, sPoints, 3);
