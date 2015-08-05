@@ -171,6 +171,11 @@
     _currentIndex = num;
     poplistview.index = self.currentIndex;
     [self resetContent];
+    if (0 <= _currentIndex <= _items.count) {
+        doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
+        [_invokeResult SetResultInteger:(int)_currentIndex];
+        [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
+    }
 }
 - (NSInteger)currentIndex
 {
@@ -193,9 +198,9 @@
     [self change_index:[@(_currentIndex) stringValue]];
     [self resetContent];
 
-    CGFloat fontSize = self.titleLabel.font.pointSize;
-    [self setFontStyle:self.titleLabel :fontSize];
-    [self setTextFlag:self.titleLabel :fontSize];
+//    CGFloat fontSize = self.titleLabel.font.pointSize;
+//    [self setFontStyle:self.titleLabel :fontSize];
+//    [self setTextFlag:self.titleLabel :fontSize];
 
     [self resetPoplist];
     poplistview.index = self.currentIndex;
@@ -204,6 +209,9 @@
 {
     if (_items.count > 0) {
         [self setTitle:[_items objectAtIndex:self.currentIndex] forState:UIControlStateNormal];
+        CGFloat fontSize = self.titleLabel.font.pointSize;
+        [self setFontStyle:self.titleLabel :fontSize];
+        [self setTextFlag:self.titleLabel :fontSize];
     }
 }
 - (void)setFontStyle:(UILabel *)label :(CGFloat)fontSize
@@ -286,6 +294,9 @@
     UITableViewCell *cell  = [popListView.listView cellForRowAtIndexPath:indexPath];
     UILabel *label = (UILabel *)[cell.contentView viewWithTag:999];
     [self setTitle:label.text forState:UIControlStateNormal];
+    CGFloat fontSize = label.font.pointSize;
+    [self setFontStyle:self.titleLabel :fontSize];
+    [self setTextFlag:self.titleLabel :fontSize];
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
     [_invokeResult SetResultInteger:(int)indexPath.row];
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
