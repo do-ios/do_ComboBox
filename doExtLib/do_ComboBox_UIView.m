@@ -71,6 +71,20 @@
     poplistview.isDisplay = NO;
     poplistview.delegate = self;
     poplistview.datasource = self;
+
+    UIImage *image = [UIImage imageNamed:@"do_ComboBox_UI.bundle/icon_combo"];
+
+
+//    icon.contentMode = UIViewContentModeScaleToFill;
+    CGRect r = self.bounds;
+    CGFloat h = CGRectGetHeight(r);
+    CGFloat w = CGRectGetWidth(r);
+    CGRect frame = CGRectMake(w-h*0.1, h*0.9, h*0.1, h*0.1);
+    UIImageView *icon = [[UIImageView alloc] initWithFrame:frame];
+//    icon.backgroundColor  = [UIColor blueColor];
+    icon.image = image;
+
+    [self addSubview:icon];
 }
 
 #pragma mark - TYPEID_IView协议方法（必须）
@@ -83,25 +97,29 @@
  NSString *属性名 = [(doUIModule *)_model GetProperty:@"属性名"].DefaultValue;
  */
 
-- (void)drawRect:(CGRect)rect
-{
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
-    CGContextSetLineWidth(context, .1);
-
-    CGPoint sPoints[3];
-    CGFloat h = CGRectGetHeight(rect);
-    CGFloat w = CGRectGetWidth(rect);
-    sPoints[0] =CGPointMake(w-h*0.1, h);
-    sPoints[1] =CGPointMake(w, h-h*0.1);
-    sPoints[2] =CGPointMake(w, h);
-
-    CGContextAddLines(context, sPoints, 3);
-
-    CGContextClosePath(context);
-    CGContextDrawPath(context, kCGPathFill);
-}
+//- (void)drawRect:(CGRect)rect
+//{
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    
+//    
+//    
+//    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+//    CGContextSetLineWidth(context, .1);
+//
+//    CGPoint sPoints[3];
+//    CGFloat h = CGRectGetHeight(rect);
+//    CGFloat w = CGRectGetWidth(rect);
+//    sPoints[0] =CGPointMake(w-h*0.1, h);
+//    sPoints[1] =CGPointMake(w, h-h*0.1);
+//    sPoints[2] =CGPointMake(w, h);
+//
+//    CGContextAddLines(context, sPoints, 3);
+//
+//    CGContextClosePath(context);
+//    CGContextDrawPath(context, kCGPathFill);
+//    
+//    UIGraphicsEndImageContext();
+//}
 - (void)change_fontColor:(NSString *)newValue
 {
     //自己的代码实现

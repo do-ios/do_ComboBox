@@ -69,6 +69,7 @@
 		7753C8691B4A7E8C00E92575 /* do_ComboBox_UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = do_ComboBox_UIView.m; sourceTree = "<group>"; };
 		7753C86C1B4A803000E92575 /* doPopListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = doPopListView.h; sourceTree = "<group>"; };
 		7753C86D1B4A803000E92575 /* doPopListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = doPopListView.m; sourceTree = "<group>"; };
+		77B421261B72F6F000886AD5 /* do_ComboBox_UI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = do_ComboBox_UI.bundle; sourceTree = "<group>"; };
 		A44BC66A1AEE005E001580AA /* Do_Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Do_Test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A44BC66E1AEE005E001580AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A44BC66F1AEE005E001580AA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -355,6 +356,7 @@
 		A44BC7B31AEE19CD001580AA /* doExtLib */ = {
 			isa = PBXGroup;
 			children = (
+				77B421261B72F6F000886AD5 /* do_ComboBox_UI.bundle */,
 				7753C8651B4A7E8C00E92575 /* do_ComboBox_IView.h */,
 				7753C8661B4A7E8C00E92575 /* do_ComboBox_UIModel.h */,
 				7753C8671B4A7E8C00E92575 /* do_ComboBox_UIModel.m */,
