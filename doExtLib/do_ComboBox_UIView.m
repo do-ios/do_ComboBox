@@ -44,7 +44,7 @@
     self.userInteractionEnabled = YES;
 
     [self change_fontColor:[_model GetProperty:@"fontColor"].DefaultValue];
-    [self change_index:[_model GetProperty:@"index"].DefaultValue];
+    _currentIndex = 0;
     [self change_fontStyle:[_model GetProperty:@"fontStyle"].DefaultValue];
     [self change_textFlag:[_model GetProperty:@"textFlag"].DefaultValue];
     [self change_fontSize:[_model GetProperty:@"fontSize"].DefaultValue];
@@ -85,6 +85,8 @@
     icon.image = image;
 
     [self addSubview:icon];
+    
+    
 }
 
 #pragma mark - TYPEID_IView协议方法（必须）
@@ -185,15 +187,16 @@
 - (void)change_index:(NSString *)newValue
 {
     //自己的代码实现
+    if (!newValue) {
+        return;
+    }
     NSInteger num = [newValue integerValue];
     _currentIndex = num;
     poplistview.index = self.currentIndex;
     [self resetContent];
-    if (0 <= _currentIndex <= _items.count) {
-        doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
-        [_invokeResult SetResultInteger:(int)_currentIndex];
-        [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
-    }
+    doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
+    [_invokeResult SetResultInteger:(int)self.currentIndex];
+    [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
 }
 - (NSInteger)currentIndex
 {
@@ -212,16 +215,17 @@
     //自己的代码实现
     _items = [NSMutableArray arrayWithArray:[newValue componentsSeparatedByString:@","]];
     poplistview.items = _items;
-
-    [self change_index:[@(_currentIndex) stringValue]];
+    [self change_index:[@(self.currentIndex) stringValue]];
     [self resetContent];
 
 //    CGFloat fontSize = self.titleLabel.font.pointSize;
 //    [self setFontStyle:self.titleLabel :fontSize];
 //    [self setTextFlag:self.titleLabel :fontSize];
-
+//
     [self resetPoplist];
     poplistview.index = self.currentIndex;
+
+
 }
 - (void)resetContent
 {
