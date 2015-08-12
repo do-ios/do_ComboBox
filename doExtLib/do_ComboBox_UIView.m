@@ -15,6 +15,7 @@
 #import "doPopListView.h"
 #import "doTextHelper.h"
 #import "doDefines.h"
+#import "doModuleBase.h"
 
 #define FONT_OBLIQUITY 15.0
 #define CELL_HEIGHT 60.0f
@@ -191,12 +192,18 @@
         return;
     }
     NSInteger num = [newValue integerValue];
+    if (_currentIndex == num) {
+        return;
+    }
     _currentIndex = num;
     poplistview.index = self.currentIndex;
     [self resetContent];
+    
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
     [_invokeResult SetResultInteger:(int)self.currentIndex];
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
+    
+    [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
 }
 - (NSInteger)currentIndex
 {
@@ -215,17 +222,13 @@
     //自己的代码实现
     _items = [NSMutableArray arrayWithArray:[newValue componentsSeparatedByString:@","]];
     poplistview.items = _items;
-    [self change_index:[@(self.currentIndex) stringValue]];
-    [self resetContent];
-
-//    CGFloat fontSize = self.titleLabel.font.pointSize;
-//    [self setFontStyle:self.titleLabel :fontSize];
-//    [self setTextFlag:self.titleLabel :fontSize];
-//
+    NSString  *iii = [_model GetPropertyValue:@"index"];
     [self resetPoplist];
-    poplistview.index = self.currentIndex;
-
-
+    poplistview.index = [iii integerValue];
+    [self resetContent:[iii integerValue]];
+    doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
+    [_invokeResult SetResultInteger:(int)[iii integerValue]];
+    [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
 }
 - (void)resetContent
 {
@@ -235,6 +238,16 @@
         [self setFontStyle:self.titleLabel :fontSize];
         [self setTextFlag:self.titleLabel :fontSize];
     }
+}
+- (void)resetContent:(NSInteger )curIndex
+{
+    if (_items.count > 0) {
+        [self setTitle:[_items objectAtIndex:curIndex] forState:UIControlStateNormal];
+        CGFloat fontSize = self.titleLabel.font.pointSize;
+        [self setFontStyle:self.titleLabel :fontSize];
+        [self setTextFlag:self.titleLabel :fontSize];
+    }
+
 }
 - (void)setFontStyle:(UILabel *)label :(CGFloat)fontSize
 {
@@ -319,9 +332,18 @@
     CGFloat fontSize = label.font.pointSize;
     [self setFontStyle:self.titleLabel :fontSize];
     [self setTextFlag:self.titleLabel :fontSize];
+    
+    //得到内存中得值
+    NSString  *iii = [_model GetPropertyValue:@"index"];
+    
+    if (indexPath.row == [iii integerValue]) {
+        return;
+    }
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
     [_invokeResult SetResultInteger:(int)indexPath.row];
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
+    //设置内存中index得值
+    [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)indexPath.row]];
 }
 
 #pragma mark - doIUIModuleView协议方法（必须）<大部分情况不需修改>
