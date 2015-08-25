@@ -165,11 +165,7 @@
 }
 - (void)setTextFlag:(UILabel *)label :(CGFloat)fontSize
 {
-    if (!IOS_8 && _fontSize < 14) {
-        return;
-    }
     if (label.text==nil || [label.text isEqualToString:@""]) return;
-
     NSMutableAttributedString *content = [label.attributedText mutableCopy];
     [content beginEditing];
     NSRange contentRange = {0,[content length]};
@@ -182,6 +178,7 @@
         [content addAttribute:NSStrikethroughStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
     }
     label.attributedText = content;
+    [self setAttributedTitle:content forState:UIControlStateNormal];
     [content endEditing];
 }
 
@@ -192,18 +189,20 @@
         return;
     }
     NSInteger num = [newValue integerValue];
-    if (_currentIndex == num) {
-        return;
-    }
+    NSInteger selIndex = [self getSelectedIndex];
+    
     _currentIndex = num;
     poplistview.index = self.currentIndex;
-    [self resetContent];
-    
+    [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
+
+    if (self.currentIndex == selIndex) {
+        return;
+    }
+    [self resetContent:self.currentIndex];
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
     [_invokeResult SetResultInteger:(int)self.currentIndex];
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
     
-    [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
 }
 - (NSInteger)currentIndex
 {
@@ -224,30 +223,42 @@
     poplistview.items = _items;
     NSString  *iii = [_model GetPropertyValue:@"index"];
     [self resetPoplist];
-    poplistview.index = [iii integerValue];
-    [self resetContent:[iii integerValue]];
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
-    [_invokeResult SetResultInteger:(int)[iii integerValue]];
+    if ([iii integerValue] > self.currentIndex) {
+        [_invokeResult SetResultInteger:(int)self.currentIndex];
+        poplistview.index = self.currentIndex;
+        [self resetContent:self.currentIndex];
+        [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
+    }
+    else
+    {
+        [_invokeResult SetResultInteger:(int)[iii integerValue]];
+        poplistview.index = [iii integerValue];
+        [self resetContent:[iii integerValue]];
+        [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)[iii integerValue]]];
+
+    }
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
 }
-- (void)resetContent
+- (NSInteger)getSelectedIndex
 {
-    if (_items.count > 0) {
-        [self setTitle:[_items objectAtIndex:self.currentIndex] forState:UIControlStateNormal];
-        CGFloat fontSize = self.titleLabel.font.pointSize;
-        [self setFontStyle:self.titleLabel :fontSize];
-        [self setTextFlag:self.titleLabel :fontSize];
+    if ([_items containsObject:self.titleLabel.text]) {
+        return [_items indexOfObject:self.titleLabel.text];
+    }
+    else
+    {
+        return -1;
     }
 }
 - (void)resetContent:(NSInteger )curIndex
 {
     if (_items.count > 0) {
         [self setTitle:[_items objectAtIndex:curIndex] forState:UIControlStateNormal];
+        self.titleLabel.text = [_items objectAtIndex:curIndex];
         CGFloat fontSize = self.titleLabel.font.pointSize;
         [self setFontStyle:self.titleLabel :fontSize];
         [self setTextFlag:self.titleLabel :fontSize];
     }
-
 }
 - (void)setFontStyle:(UILabel *)label :(CGFloat)fontSize
 {
@@ -301,7 +312,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                       reuseIdentifier:identifier];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, CGRectGetWidth(cell.contentView.frame)-40, CGRectGetHeight(cell.contentView.frame)-20)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, CGRectGetWidth(cell.contentView.frame)-40, CGRectGetHeight(cell.contentView.frame)-10)];
         label.tag = 999;
         [cell.contentView addSubview:label];
     }
@@ -328,7 +339,8 @@
 {
     UITableViewCell *cell  = [popListView.listView cellForRowAtIndexPath:indexPath];
     UILabel *label = (UILabel *)[cell.contentView viewWithTag:999];
-    [self setTitle:label.text forState:UIControlStateNormal];
+//    [self setTitle:label.text forState:UIControlStateNormal];
+    [self setAttributedTitle:label.attributedText forState:UIControlStateNormal];
     CGFloat fontSize = label.font.pointSize;
     [self setFontStyle:self.titleLabel :fontSize];
     [self setTextFlag:self.titleLabel :fontSize];

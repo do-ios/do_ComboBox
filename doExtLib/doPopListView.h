@@ -48,7 +48,6 @@
 
 @property (nonatomic, assign) NSInteger index;
 
-
 - (void)setTitle:(NSString *)title;
 - (void)reload;
 - (void)show;
