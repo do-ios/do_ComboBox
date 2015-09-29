@@ -17,6 +17,7 @@
 #import "doDefines.h"
 #import "doModuleBase.h"
 
+
 #define FONT_OBLIQUITY 15.0
 #define CELL_HEIGHT 60.0f
 
@@ -99,35 +100,34 @@
  获取属性最初的默认值
  NSString *属性名 = [(doUIModule *)_model GetProperty:@"属性名"].DefaultValue;
  */
-
-//- (void)drawRect:(CGRect)rect
-//{
-//    CGContextRef context = UIGraphicsGetCurrentContext();
-//    
-//    
-//    
-//    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
-//    CGContextSetLineWidth(context, .1);
-//
-//    CGPoint sPoints[3];
-//    CGFloat h = CGRectGetHeight(rect);
-//    CGFloat w = CGRectGetWidth(rect);
-//    sPoints[0] =CGPointMake(w-h*0.1, h);
-//    sPoints[1] =CGPointMake(w, h-h*0.1);
-//    sPoints[2] =CGPointMake(w, h);
-//
-//    CGContextAddLines(context, sPoints, 3);
-//
-//    CGContextClosePath(context);
-//    CGContextDrawPath(context, kCGPathFill);
-//    
-//    UIGraphicsEndImageContext();
-//}
+- (void)change_textAlign:(NSString *)newValue
+{
+    
+    if ([newValue isEqualToString:@"left"]) {
+        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+    }
+    else if ([newValue isEqualToString:@"center"])
+    {
+        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+    }
+    else if([newValue isEqualToString:@"right"])
+    {
+        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+    }
+}
 - (void)change_fontColor:(NSString *)newValue
 {
     //自己的代码实现
+    if (self.currentAttributedTitle.length <= 0) {
+        return;
+    }
     _fontColor = [doUIModuleHelper GetColorFromString:newValue :[doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]]];
-    [self setTitleColor:_fontColor forState:UIControlStateNormal];
+    NSMutableAttributedString *attriString = [[NSMutableAttributedString alloc]initWithAttributedString:self.currentAttributedTitle];
+    [attriString addAttribute:NSForegroundColorAttributeName
+                        value:_fontColor
+                        range:NSMakeRange(0, self.currentAttributedTitle.length)];
+
+    [self setAttributedTitle:attriString forState:UIControlStateNormal];
     if (poplistview.isDisplay) {
         [poplistview reload];
     }
@@ -160,7 +160,8 @@
     _myFontFlag = [NSString stringWithFormat:@"%@",newValue];
 
     CGFloat fontSize = self.titleLabel.font.pointSize;
-    [self setTextFlag:self.titleLabel :fontSize];
+//    [self setTextFlag:self.titleLabel :fontSize];
+    [self setTextFlags:self.currentAttributedTitle :fontSize];
     [poplistview reload];
 }
 - (void)setTextFlag:(UILabel *)label :(CGFloat)fontSize
@@ -181,7 +182,22 @@
     [self setAttributedTitle:content forState:UIControlStateNormal];
     [content endEditing];
 }
-
+- (void)setTextFlags:(NSAttributedString *)attributedText :(CGFloat)fontSize
+{
+    NSMutableAttributedString *content = [attributedText mutableCopy];
+    [content beginEditing];
+    NSRange contentRange = {0,[content length]};
+    if ([_myFontFlag isEqualToString:@"normal" ]) {
+        [content removeAttribute:NSUnderlineStyleAttributeName range:contentRange];
+        [content removeAttribute:NSStrikethroughStyleAttributeName range:contentRange];
+    }else if ([_myFontFlag isEqualToString:@"underline" ]) {
+        [content addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
+    }else if ([_myFontFlag isEqualToString:@"strikethrough" ]) {
+        [content addAttribute:NSStrikethroughStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
+    }
+    [self setAttributedTitle:content forState:UIControlStateNormal];
+    [content endEditing];
+}
 - (void)change_index:(NSString *)newValue
 {
     //自己的代码实现
@@ -253,11 +269,12 @@
 - (void)resetContent:(NSInteger )curIndex
 {
     if (_items.count > 0) {
-        [self setTitle:[_items objectAtIndex:curIndex] forState:UIControlStateNormal];
-        self.titleLabel.text = [_items objectAtIndex:curIndex];
+        NSRange range = NSMakeRange(0, 1);
+        NSDictionary *arrDict = [self.currentAttributedTitle attributesAtIndex:0 effectiveRange:&range];
+        [self setAttributedTitle:[[NSAttributedString alloc]initWithString:[_items objectAtIndex:curIndex] attributes:arrDict] forState:UIControlStateNormal];
         CGFloat fontSize = self.titleLabel.font.pointSize;
         [self setFontStyle:self.titleLabel :fontSize];
-        [self setTextFlag:self.titleLabel :fontSize];
+        [self setTextFlags:self.currentAttributedTitle :fontSize];
     }
 }
 - (void)setFontStyle:(UILabel *)label :(CGFloat)fontSize
@@ -323,9 +340,19 @@
     label.text = [_items objectAtIndex:indexPath.row];
     
     CGFloat fontSize = label.font.pointSize;
+    NSMutableAttributedString *content = [label.attributedText mutableCopy];
+    [content beginEditing];
+    NSRange contentRange = {0,[content length]};
+    if ([_myFontFlag isEqualToString:@"normal" ]) {
+        [content removeAttribute:NSUnderlineStyleAttributeName range:contentRange];
+        [content removeAttribute:NSStrikethroughStyleAttributeName range:contentRange];
+    }else if ([_myFontFlag isEqualToString:@"underline" ]) {
+        [content addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
+    }else if ([_myFontFlag isEqualToString:@"strikethrough" ]) {
+        [content addAttribute:NSStrikethroughStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:contentRange];
+    }
+    label.attributedText = content;
     [self setFontStyle:label :fontSize];
-    [self setTextFlag:label :fontSize];
-
     return cell;
 }
 
@@ -339,8 +366,10 @@
 {
     UITableViewCell *cell  = [popListView.listView cellForRowAtIndexPath:indexPath];
     UILabel *label = (UILabel *)[cell.contentView viewWithTag:999];
-//    [self setTitle:label.text forState:UIControlStateNormal];
-    [self setAttributedTitle:label.attributedText forState:UIControlStateNormal];
+    NSRange range = NSMakeRange(0, 1);
+    NSDictionary *arrDict = [self.currentAttributedTitle attributesAtIndex:0 effectiveRange:&range];
+    [self setAttributedTitle:[[NSAttributedString alloc]initWithString:label.text attributes:arrDict] forState:UIControlStateNormal];
+//    [self setAttributedTitle:label.attributedText forState:UIControlStateNormal];
     CGFloat fontSize = label.font.pointSize;
     [self setFontStyle:self.titleLabel :fontSize];
     [self setTextFlag:self.titleLabel :fontSize];

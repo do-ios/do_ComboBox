@@ -17,7 +17,7 @@
 - (void)change_fontStyle:(NSString *)newValue;
 - (void)change_index:(NSString *)newValue;
 - (void)change_items:(NSString *)newValue;
-
+- (void)change_textAlign:(NSString *)newValue;
 //同步或异步方法
 
 
