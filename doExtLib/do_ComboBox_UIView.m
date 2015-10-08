@@ -34,6 +34,8 @@
     UIColor *_fontColor;
     NSString *_fontStyle;
     NSString *_myFontFlag;
+    //对齐标识
+    NSInteger _alignFlag;
 }
 @synthesize currentIndex=_currentIndex;
 #pragma mark - doIUIModuleView协议方法（必须）
@@ -44,7 +46,7 @@
     _items = [NSMutableArray array];
     
     self.userInteractionEnabled = YES;
-
+    [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
     [self change_fontColor:[_model GetProperty:@"fontColor"].DefaultValue];
     _currentIndex = 0;
     [self change_fontStyle:[_model GetProperty:@"fontStyle"].DefaultValue];
@@ -104,15 +106,19 @@
 {
     
     if ([newValue isEqualToString:@"left"]) {
+        
         [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+        _alignFlag = 0;
     }
     else if ([newValue isEqualToString:@"center"])
     {
-        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+        _alignFlag = 1;
     }
     else if([newValue isEqualToString:@"right"])
     {
-        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+        [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+        _alignFlag = 2;
     }
 }
 - (void)change_fontColor:(NSString *)newValue
@@ -329,8 +335,15 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                       reuseIdentifier:identifier];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, CGRectGetWidth(cell.contentView.frame)-40, CGRectGetHeight(cell.contentView.frame)-10)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, CGRectGetWidth(cell.contentView.frame)-80, CGRectGetHeight(cell.contentView.frame)-10)];
         label.tag = 999;
+        if (_alignFlag == 1) {
+            label.textAlignment = NSTextAlignmentCenter;
+        }
+        else if(_alignFlag == 2)
+        {
+            label.textAlignment = NSTextAlignmentRight;
+        }
         [cell.contentView addSubview:label];
     }
     

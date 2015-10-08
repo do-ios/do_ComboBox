@@ -25,7 +25,7 @@
     [self RegistProperty:[[doProperty alloc]init:@"textFlag" :String :@"normal" :NO]];
 	[self RegistProperty:[[doProperty alloc]init:@"index" :String :@"" :NO]];
 	[self RegistProperty:[[doProperty alloc]init:@"items" :String :@"" :NO]];
-    [self RegistProperty:[[doProperty alloc]init:@"textAlign" :String :@"" :NO]];
+    [self RegistProperty:[[doProperty alloc]init:@"textAlign" :String :@"left" :NO]];
 
 }
 
