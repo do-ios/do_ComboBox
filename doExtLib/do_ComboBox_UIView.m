@@ -335,7 +335,8 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                       reuseIdentifier:identifier];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, CGRectGetWidth(cell.contentView.frame)-80, CGRectGetHeight(cell.contentView.frame)-10)];
+        //ipad下cell的width为320
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, CGRectGetWidth([UIScreen mainScreen].bounds)-80, CGRectGetHeight(cell.frame)-10)];
         label.tag = 999;
         if (_alignFlag == 1) {
             label.textAlignment = NSTextAlignmentCenter;
@@ -343,6 +344,10 @@
         else if(_alignFlag == 2)
         {
             label.textAlignment = NSTextAlignmentRight;
+        }
+        else
+        {
+            label.textAlignment = NSTextAlignmentLeft;
         }
         [cell.contentView addSubview:label];
     }
