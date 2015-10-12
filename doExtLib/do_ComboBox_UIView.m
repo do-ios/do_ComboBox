@@ -125,7 +125,8 @@
 {
     //自己的代码实现
     if (self.currentAttributedTitle.length <= 0) {
-        return;
+        NSMutableAttributedString *curTitle = [[NSMutableAttributedString alloc]initWithString:@" "];
+        [self setAttributedTitle:curTitle forState:UIControlStateNormal];
     }
     _fontColor = [doUIModuleHelper GetColorFromString:newValue :[doUIModuleHelper GetColorFromString:[_model GetProperty:@"fontColor"].DefaultValue :[UIColor blackColor]]];
     NSMutableAttributedString *attriString = [[NSMutableAttributedString alloc]initWithAttributedString:self.currentAttributedTitle];
