@@ -242,7 +242,15 @@
 - (void)change_items:(NSString *)newValue
 {
     //自己的代码实现
-    _items = [NSMutableArray arrayWithArray:[newValue componentsSeparatedByString:@","]];
+    if (newValue.length == 0) {
+        _items = nil;
+        NSAttributedString *attri = [[NSAttributedString alloc]initWithString:@""];
+        [self setAttributedTitle:attri forState:UIControlStateNormal];
+    }
+    else
+    {
+       _items = [NSMutableArray arrayWithArray:[newValue componentsSeparatedByString:@","]];
+    }
     poplistview.items = _items;
     NSString  *iii = [_model GetPropertyValue:@"index"];
     [self resetPoplist];
