@@ -371,11 +371,32 @@
 }
 - (void)refreshItems:(NSArray *)parms
 {
+    //清空数据
+    [_items removeAllObjects];
     for (int i = 0; i < [_dataArrays GetCount]; i ++) {
         if (![_items containsObject:[_dataArrays GetData:i]]) {
             [_items addObject:[_dataArrays GetData:i]];
         }
     }
+    poplistview.items = _items;
+    NSString  *iii = [_model GetPropertyValue:@"index"];
+    [self resetPoplist];
+    doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:_model.UniqueKey];
+    if ([iii integerValue] > self.currentIndex) {
+        [_invokeResult SetResultInteger:(int)self.currentIndex];
+        poplistview.index = self.currentIndex;
+        [self resetContent:self.currentIndex];
+        [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
+    }
+    else
+    {
+        [_invokeResult SetResultInteger:(int)[iii integerValue]];
+        poplistview.index = [iii integerValue];
+        [self resetContent:[iii integerValue]];
+        [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)[iii integerValue]]];
+        
+    }
+    [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
 }
 
 #pragma mark - UIPopoverListViewDataSource
