@@ -5,7 +5,7 @@
     "Name": "组合框控件",
     "Version": "Internal",
     "Description": "点击控件会弹出一个选择列表，单击选项即可选中",
-    "Icon": "https://deviceone.blob.core.chinacloudapi.cn/store/R/20150723/4b499ba2-3c42-414f-8433-2670ca9f0742.png",
+    "Icon": "https://do-store.oss-cn-beijing.aliyuncs.com/D/20160121/do_ComboBox/combox.jpg",
     "IOS": {
         "Support": 1,
         "MinVersion": "7.0"
@@ -16,11 +16,11 @@
     },
     "Windows": {
         "Support": 1,
-        "MinVersion": "8.1"
+        "MinVersion": "10"
     },
     "WindowsPhone": {
         "Support": 1,
-        "MinVersion": "8.1"
+        "MinVersion": "10"
     },
     "Html": {
         "Support": 1,
@@ -60,7 +60,7 @@
                    "DefaultValue": "normal",
                    "EditType": "1",
                    "Group": "",
-                   "Description": "包含4种类型：normal：常规bold：粗体italic：斜体bold_italic：粗斜体",
+                   "Description": "包含4种类型：normal：常规bold：粗体italic：斜体bold_italic：粗斜体（iOS平台不支持）",
                    "Design": {
                    "Type": "List",
                    "Data": [
@@ -184,7 +184,7 @@
                                "Type": "Node",
                                "Required": 0,
                                "DefaultValue": "",
-                               "Description": ""
+                               "Description": "比如[{'text':'a1','id':'1'},{'text':'a2','id':'2'}]，其中text字段是必须的，用于显示文本内容，这里显示的就是a1，a2，其他字段可任意增加，根据选择的item索引获取内容"
                                }
                                ]
                      },
