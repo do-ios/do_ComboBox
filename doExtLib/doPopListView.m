@@ -70,6 +70,12 @@
 #pragma mark - property
 - (void)setIndex:(NSInteger)newValue
 {
+    if ([self numbers]>0) {
+        if (newValue<0||newValue>[self numbers]-1) {
+            newValue = [self numbers]-1;
+        }
+    }else
+        newValue = NSNotFound;
     NSIndexPath *index = [NSIndexPath indexPathForRow:newValue inSection:0];
     [_listView scrollToRowAtIndexPath:index atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
@@ -80,6 +86,15 @@
 }
 
 #pragma mark - UITableViewDataSource
+- (NSInteger)numbers
+{
+    if(self.datasource &&
+       [self.datasource respondsToSelector:@selector(popListView:numberOfRowsInSection:)])
+    {
+        return [self.datasource popListView:self numberOfRowsInSection:0];
+    }
+    return 0;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -88,13 +103,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if(self.datasource &&
-       [self.datasource respondsToSelector:@selector(popListView:numberOfRowsInSection:)])
-    {
-        return [self.datasource popListView:self numberOfRowsInSection:section];
-    }
-    
-    return 0;
+    return [self numbers];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
