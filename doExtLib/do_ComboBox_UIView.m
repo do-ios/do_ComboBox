@@ -374,7 +374,11 @@
     //清空数据
     [_items removeAllObjects];
     for (int i = 0; i < [_dataArrays GetCount]; i ++) {
-        NSString *text = [doJsonHelper GetOneText:[_dataArrays GetData:i] :@"text" :@""];
+        id node = [_dataArrays GetData:i];
+        if (![node isKindOfClass:[NSDictionary class]]) {
+            continue;
+        }
+        NSString *text = [doJsonHelper GetOneText:node :@"text" :@""];
         if (![_items containsObject:text]) {
             [_items addObject:text];
         }
