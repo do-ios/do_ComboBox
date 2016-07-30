@@ -221,7 +221,7 @@
     
     _currentIndex = num;
     poplistview.index = self.currentIndex;
-    [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
+    [_model SetPropertyValue:@"index" :[@(self.currentIndex) stringValue]];
 
     if (self.currentIndex == selIndex) {
         return;
@@ -240,7 +240,8 @@
             num = 0;
         }else if(num >= _items.count)
             num = _items.count-1;
-    }
+    }else
+        num = 0;
     return num;
 }
 
@@ -264,15 +265,14 @@
         [_invokeResult SetResultInteger:(int)self.currentIndex];
         poplistview.index = self.currentIndex;
         [self resetContent:self.currentIndex];
-        [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)self.currentIndex]];
+        [_model SetPropertyValue:@"index" :[@(self.currentIndex) stringValue]];
     }
     else
     {
         [_invokeResult SetResultInteger:(int)[iii integerValue]];
         poplistview.index = [iii integerValue];
         [self resetContent:[iii integerValue]];
-        [_model SetPropertyValue:@"index" :[NSString stringWithFormat:@"%ld",(long)[iii integerValue]]];
-
+        [_model SetPropertyValue:@"index" :iii];
     }
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
 }
