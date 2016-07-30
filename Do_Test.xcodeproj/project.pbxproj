@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7744CCF01D4AFF8D00150CAA /* do_ComboBox_UI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 77B421261B72F6F000886AD5 /* do_ComboBox_UI.bundle */; };
 		7753C86A1B4A7E8C00E92575 /* do_ComboBox_UIModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7753C8671B4A7E8C00E92575 /* do_ComboBox_UIModel.m */; };
 		7753C86B1B4A7E8C00E92575 /* do_ComboBox_UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7753C8691B4A7E8C00E92575 /* do_ComboBox_UIView.m */; };
 		7753C86E1B4A803000E92575 /* doPopListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7753C86D1B4A803000E92575 /* doPopListView.m */; };
+		778B2BBD1D48BE0200F76D4F /* do_ComboBox_UIModel.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7753C8661B4A7E8C00E92575 /* do_ComboBox_UIModel.h */; };
+		778B2BBE1D48BE0200F76D4F /* do_ComboBox_UIView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7753C8681B4A7E8C00E92575 /* do_ComboBox_UIView.h */; };
 		A44BC6701AEE005E001580AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A44BC66F1AEE005E001580AA /* main.m */; };
 		A44BC6731AEE005E001580AA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A44BC6721AEE005E001580AA /* AppDelegate.m */; };
 		A44BC6761AEE005E001580AA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A44BC6751AEE005E001580AA /* ViewController.m */; };
@@ -56,6 +59,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				7744CCF01D4AFF8D00150CAA /* do_ComboBox_UI.bundle in CopyFiles */,
+				778B2BBD1D48BE0200F76D4F /* do_ComboBox_UIModel.h in CopyFiles */,
+				778B2BBE1D48BE0200F76D4F /* do_ComboBox_UIView.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
