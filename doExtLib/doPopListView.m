@@ -12,6 +12,8 @@
 //#define FRAME_X_INSET 20.0f
 //#define FRAME_Y_INSET 40.0f
 
+#define OVER_COLOR [UIColor colorWithRed:.16 green:.17 blue:.21 alpha:.5];
+
 @interface doPopListView ()
 
 - (void)defalutInit;
@@ -52,7 +54,7 @@
     [self addSubview:_listView];
 
     _overlayView = [[UIControl alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    _overlayView.backgroundColor = [UIColor colorWithRed:.16 green:.17 blue:.21 alpha:.5];
+    _overlayView.backgroundColor = OVER_COLOR;
     [_overlayView addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -141,6 +143,7 @@
 {
     [UIView animateWithDuration:.35 animations:^{\
         self.alpha = 0.0;
+        _overlayView.alpha = 0.0;
     } completion:^(BOOL finished) {
         if (finished) {
             [_overlayView removeFromSuperview];
@@ -157,6 +160,7 @@
 - (void)show
 {
     self.isDisplay = YES;
+    _overlayView.alpha = 1.0;
     UIWindow *keywindow = [[UIApplication sharedApplication] keyWindow];
     [keywindow addSubview:_overlayView];
     [keywindow addSubview:self];
