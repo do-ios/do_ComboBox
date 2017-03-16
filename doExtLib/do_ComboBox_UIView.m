@@ -41,6 +41,8 @@
     NSInteger _alignFlag;
     
     id<doIListData> _dataArrays;
+    
+    int _no;
 }
 @synthesize currentIndex=_currentIndex;
 #pragma mark - doIUIModuleView协议方法（必须）
@@ -54,6 +56,7 @@
     [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
     [self change_fontColor:[_model GetProperty:@"fontColor"].DefaultValue];
     _currentIndex = 0;
+    _no = 0;
     [self change_fontStyle:[_model GetProperty:@"fontStyle"].DefaultValue];
     [self change_textFlag:[_model GetProperty:@"textFlag"].DefaultValue];
     [self change_fontSize:[_model GetProperty:@"fontSize"].DefaultValue];
@@ -92,10 +95,7 @@
     UIImageView *icon = [[UIImageView alloc] initWithFrame:frame];
 //    icon.backgroundColor  = [UIColor blueColor];
     icon.image = image;
-
     [self addSubview:icon];
-    
-    
 }
 
 #pragma mark - TYPEID_IView协议方法（必须）
@@ -217,7 +217,7 @@
         return;
     }
     NSInteger num = [newValue integerValue];
-    NSInteger selIndex = [self getSelectedIndex];
+    NSInteger selIndex = _no;
     
     _currentIndex = num;
     poplistview.index = self.currentIndex;
@@ -276,15 +276,10 @@
     }
     [_model.EventCenter FireEvent:@"selectChanged" :_invokeResult];
 }
-- (NSInteger)getSelectedIndex
+- (void)setAttributedTitle:(nullable NSAttributedString *)title forState:(UIControlState)state
 {
-    if ([_items containsObject:self.titleLabel.text]) {
-        return [_items indexOfObject:self.titleLabel.text];
-    }
-    else
-    {
-        return -1;
-    }
+    _no = self.currentIndex;
+    [super setAttributedTitle:title forState:state];
 }
 - (void)resetContent:(NSInteger )curIndex
 {
@@ -379,9 +374,12 @@
             continue;
         }
         NSString *text = [doJsonHelper GetOneText:node :@"text" :@""];
-        if (![_items containsObject:text]) {
-            [_items addObject:text];
-        }
+//        if (![_items containsObject:text]) {
+//            [_items addObject:text];
+//        }
+        
+        [_items addObject:text];
+        
     }
     poplistview.items = _items;
     NSString  *iii = [_model GetPropertyValue:@"index"];
