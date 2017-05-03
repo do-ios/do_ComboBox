@@ -381,6 +381,10 @@
         [_items addObject:text];
         
     }
+    if (_items.count == 0) { // 若所有数据清空，button label显示空字符串
+        self.titleLabel.text = @"";
+        
+    }
     poplistview.items = _items;
     NSString  *iii = [_model GetPropertyValue:@"index"];
     [self resetPoplist];
